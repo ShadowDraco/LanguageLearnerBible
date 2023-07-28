@@ -8,7 +8,6 @@ export default function WordList() {
   const [currentWord, setCurrentWord] = useState<string>('');
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    console.log(e.key);
     if (e.key === 'Enter') {
       setWordList([...wordList, currentWord]);
       setCurrentWord('');
