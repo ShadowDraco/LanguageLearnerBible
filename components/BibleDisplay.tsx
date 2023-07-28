@@ -1,12 +1,26 @@
-'use client'
-import React, { useContext } from 'react'
-import { Button, Container, Typography } from '@mui/material'
-import { BibleContext } from '@/app/page'
+'use client';
+import React, { useContext } from 'react';
+import { Button, Container, Typography } from '@mui/material';
+import { BibleContext } from '@/app/page';
+import {
+  calculateWordsToTranslate,
+  makeBibleString,
+} from '@/app/lib/fetchCalls';
 
 export default function BibleDisplay(fetchedBibleVerses: any) {
-  const { book, chapter, verses } = useContext(BibleContext)
-  const bibleVerses = { ...fetchedBibleVerses.fetchedBibleVerses }
-  console.log(book, chapter, verses, bibleVerses)
+  const {
+    book,
+    chapter,
+    verses,
+    wordList,
+    translatedList,
+    setTranslatedList,
+    setRemainingTokens,
+  } = useContext(BibleContext);
+  // const bibleVerses = { ...fetchedBibleVerses.fetchedBibleVerses };
+  const bibleVerses = { text: '' };
+  // setRemainingTokens(BibleVerses.limit_remaining);
+
   return (
     <Container
       sx={{
@@ -25,5 +39,5 @@ export default function BibleDisplay(fetchedBibleVerses: any) {
       <Typography>{bibleVerses.text}</Typography>
       <Button href='/'>Back</Button>
     </Container>
-  )
+  );
 }
