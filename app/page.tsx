@@ -8,43 +8,6 @@ import { updateLocalStorageWordList } from './lib/localStorage';
 import WordList from '@/components/WordList';
 import { makeBibleWords, calculateWordsToTranslate } from './lib/fetchCalls';
 
-export const BibleContext = createContext<BibleContextType>({
-  book: '',
-  setBook: () => {},
-  chapter: '',
-  setChapter: () => {},
-  verses: '',
-  setVerses: () => {},
-  readyToSend: false,
-  wordList: [],
-  setWordList: () => {},
-  translatedList: {},
-  setTranslatedList: () => {},
-  bibleResponse: {},
-  setBibleResponse: () => {},
-  setRemainingTokens: () => {},
-});
-export const useBibleContext = () => useContext(BibleContext);
-
-export default function Home() {
-  const [book, setBook] = useState<string>('');
-  const [chapter, setChapter] = useState<string>('');
-  const [verses, setVerses] = useState<string>('');
-  const [wordList, setWordList] = useState<Array<string>>([]);
-  const [translatedList, setTranslatedList] = useState<any>({});
-  const [bibleResponse, setBibleResponse] = useState<any>({});
-  const [remainingTokens, setRemainingTokens] = useState<string>('299987');
-  const readyToSend: boolean = book !== '' && chapter !== '' && verses !== '';
-
-  useEffect(() => {
-    updateLocalStorageWordList(
-      wordList,
-      setWordList,
-      translatedList,
-      setTranslatedList
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wordList]);
 
   const bibleVerses = {
     reference: 'Matthew 20:2-5',
@@ -84,11 +47,56 @@ export default function Home() {
     translation_note: 'Public Domain',
   };
   let bibleWords = makeBibleWords(bibleVerses.text);
-  let wordsToTranslate = calculateWordsToTranslate(
-    bibleWords,
-    wordList,
-    translatedList
-  );
+
+
+
+export const BibleContext = createContext<BibleContextType>({
+  book: '',
+  setBook: () => {},
+  chapter: '',
+  setChapter: () => {},
+  verses: '',
+  setVerses: () => {},
+  readyToSend: false,
+  wordList: [],
+  setWordList: () => {},
+  translatedList: {},
+  setTranslatedList: () => {},
+  bibleResponse: {},
+  setBibleResponse: () => {},
+  setRemainingTokens: () => {},
+});
+export const useBibleContext = () => useContext(BibleContext);
+
+export default function Home() {
+  const [book, setBook] = useState<string>('');
+  const [chapter, setChapter] = useState<string>('');
+  const [verses, setVerses] = useState<string>('');
+  const [wordList, setWordList] = useState<Array<string>>([]);
+  const [translatedList, setTranslatedList] = useState<any>({});
+  const [bibleResponse, setBibleResponse] = useState<any>({});
+  const [remainingTokens, setRemainingTokens] = useState<string>('299987');
+  const readyToSend: boolean = book !== '' && chapter !== '' && verses !== '';
+
+  useEffect(() => {
+    updateLocalStorageWordList(
+      wordList,
+      setWordList,
+      translatedList,
+      setTranslatedList
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wordList]);
+
+  useEffect(() => {
+    console.log(
+      'wordsToTranslate',
+      wordList,
+      calculateWordsToTranslate(bibleWords, wordList)
+      
+    );
+  }, [wordList]);
 
   return (
     <BibleContext.Provider

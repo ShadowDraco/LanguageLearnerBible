@@ -10,32 +10,47 @@ export const fetchBibleVerses = async (
 };
 
 export const makeBibleWords = (bibleVerseText: string) => {
-  bibleVerseText.replace(/\W/gi, '');
-  bibleVerseText.toLowerCase();
-
-  let words = bibleVerseText.split(' ');
-  console.log(words);
-
+  let replaced = bibleVerseText.replace(/\W/gi, ' ');
+  let lowered = replaced.toLowerCase();
+  let words = lowered.split(' ');
   return words;
 };
 
 export const calculateWordsToTranslate = (
   words: Array<string>,
-  wordList: Array<string>,
-  translatedList: any
+  wordList: Array<string>
 ) => {
-  let wordsNeedTranslated: Array<string> = words.filter(word => {
-    return wordList.includes(word);
+  let wordsNeedTranslated: Array<string> = [];
+  words.forEach(word => {
+    if (wordList.includes(word) && !wordsNeedTranslated.includes(word)) {
+      wordsNeedTranslated.push(word);
+    }
   });
-
-  console.log(wordsNeedTranslated);
 
   return wordsNeedTranslated;
 };
 
-export const translateCalculatedWords = async (wordList: Array<string>) => {};
+export const translateCalculatedWords = async (
+  bibleWords: Array<string>,
+  words: Array<string>,
+  translatedList: any,
+  setRemainingTokens: any
+) => {
+  //! CHECK IF THE PROMISE MAP WORKDS
+  let finalWords: Array<string> = await Promise.all(
+    bibleWords.map(async word => {
+      let replacement: string = '';
+      if (words.includes(word)) {
+        replacement = translatedList[word]
+          ? translatedList[word]
+          : await translateWord(word, setRemainingTokens);
+      }
+      return replacement;
+    })
+  );
+};
 
-export const translateWord = async (word: string) => {
+export const translateWord = async (word: string, setRemainingTokens: any) => {
   const res = await fetch(
     'https://translation-api.translate.com/translate/v1/mt',
     {
