@@ -34,38 +34,66 @@ export const translateCalculatedWords = async (
   bibleWords: Array<string>,
   words: Array<string>,
   translatedList: any,
+  setTranslatedList: any,
   setRemainingTokens: any
 ) => {
-  //! CHECK IF THE PROMISE MAP WORKDS
+  //! CHECK IF THE PROMISE MAP WORKS
   let finalWords: Array<string> = await Promise.all(
     bibleWords.map(async word => {
       let replacement: string = '';
       if (words.includes(word)) {
         replacement = translatedList[word]
           ? translatedList[word]
-          : await translateWord(word, setRemainingTokens);
+          : await translateWord(
+              word,
+              translatedList,
+              setTranslatedList,
+              setRemainingTokens
+            );
+      } else {
+        replacement = word;
       }
       return replacement;
     })
   );
+
+  console.log(finalWords);
+  return finalWords;
 };
 
-export const translateWord = async (word: string, setRemainingTokens: any) => {
+export const translateWord = async (
+  word: string,
+  setTranslatedList: any,
+  translatedList: any,
+  setRemainingTokens: any
+) => {
+  console.log('translating new word:', word, process.env.TRANSLATE_API_KEY);
   const res = await fetch(
     'https://translation-api.translate.com/translate/v1/mt',
     {
       method: 'POST',
+
       body: JSON.stringify({
         text: word,
         source_language: 'en',
         translation_language: 'ko',
+        api_key: `${process.env.TRANSLATE_API_KEY}`,
       }),
+
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+
         'x-api-key': `${process.env.TRANSLATE_API_KEY}`,
       },
     }
   );
+  console.log(res);
+  let response = await res.json();
 
-  return await res.json();
+  console.log(response);
+  let newTranslatedWord: any = {};
+  newTranslatedWord[word] = response.translation;
+  console.log(newTranslatedWord);
+  setTranslatedList({ ...translatedList, newTranslatedWord });
+  setRemainingTokens(response.limit_remaining);
 };

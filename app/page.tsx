@@ -6,7 +6,7 @@ import BibleForm from '@/components/BibleForm';
 import { BibleContextType } from './lib/types';
 import { updateLocalStorageWordList } from './lib/localStorage';
 import WordList from '@/components/WordList';
-import { makeBibleWords, calculateWordsToTranslate } from './lib/fetchCalls';
+import { makeBibleWords, calculateWordsToTranslate, translateCalculatedWords } from './lib/fetchCalls';
 
 
   const bibleVerses = {
@@ -90,13 +90,15 @@ export default function Home() {
   }, [wordList]);
 
   useEffect(() => {
-    console.log(
-      'wordsToTranslate',
-      wordList,
-      calculateWordsToTranslate(bibleWords, wordList)
-      
+    
+    translateCalculatedWords(
+      bibleWords,
+      calculateWordsToTranslate(bibleWords, wordList),
+      translatedList,
+      setTranslatedList,
+      setRemainingTokens
     );
-  }, [wordList]);
+  }, [translatedList]);
 
   return (
     <BibleContext.Provider
